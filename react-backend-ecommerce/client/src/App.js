@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import Home from './components/Home/Home'
+import Home from './components/Home/Home';
 import ItemListContainer from './components/ItemListContainer/ItemListContainer';
 import Nav from './components/Nav/Nav';
 import ItemDetail from "./components/ItemDetail/ItemDetail";
@@ -9,6 +9,8 @@ import Add from "./components/Add/Add";
 import Update from "./components/Update/Update";
 import Cart from './components/Cart/Cart';
 import CartDetail from "./components/CartDetail/CartDetail";
+import FakeItemsContainer from './components/FakeItemsContainer/FakeItemsContainer';
+import FakeItemDetail from './components/FakeItemDetail/FakeItemDetail';
 
 class App extends Component {
   render() {
@@ -21,6 +23,12 @@ class App extends Component {
           </Route>
           <Route exact path="/products">
             <ItemListContainer />
+          </Route>
+          <Route exact path="/products-test">
+            <FakeItemsContainer />
+          </Route>
+          <Route exact path="/products-test/:id">
+            <FakeItemDetail />
           </Route>
           <Route exact path="/products/:id">
             <ItemDetail />
