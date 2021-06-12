@@ -5,8 +5,9 @@ import cors from "cors";
 import { cartDb } from "./cart.js";
 import { chat } from "./chat.js";
 import { ProductsRepository } from "./Core/ProductsRepository.js";
+import { prodFaker } from "./Core/prodFaker.js";
 
-const productsRepository = new ProductsRepository(6)
+const productsRepository = new ProductsRepository(1)
 
 const admin = true;
 
@@ -45,6 +46,18 @@ app.delete("/api/cart/:id", (req, res) => {
     res.send(
       `"error" : 'does not have permissions', "description": route = '${req.url}' method = '${req.method}' not authorized`
     );
+  }
+});
+
+// FAKE PRODUCTS (FAKER.JS)
+
+app.get("/api/fakeprods/:id?", cors(), (req, res) => {
+  const { id } = req.params;
+  if(id) {
+    res.json(prodFaker.listById(id))
+  } else {
+    prodFaker.populate(req.query.q);
+    res.json(prodFaker.list())
   }
 });
 

@@ -2,8 +2,13 @@ import React from 'react';
 import './Home.css';
 import Chat from '../Chat/Chat.js'
 import SearchInput from '../SearchInput/SearchInput';
+import ItemCount from '../ItemCount';
 
 function Home() {
+  function onAdd(count) {
+    alert("Compraste" + count + "items");
+    // setAdd(min); (agregado) estaria bueno setear a cero el contador luego de agregar al carrito
+}
     return (
     <div className="App">
         <header className="App-header">
@@ -12,6 +17,7 @@ function Home() {
         </header>
         <Chat />
         <SearchInput />
+        <ItemCount initial={0} min={1} max={10} onAdd={onAdd}/>
       </div>
     )
 }
