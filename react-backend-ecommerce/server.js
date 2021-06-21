@@ -1,19 +1,29 @@
 import express from "express";
 import { Server as HttpServer } from 'http';
 import { Server as Socket } from 'socket.io';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
 import cors from "cors";
 import { cartDb } from "./cart.js";
 import { chat } from "./chat.js";
 import { ProductsRepository } from "./Core/ProductsRepository.js";
 import { prodFaker } from "./Core/prodFaker.js";
 
-const productsRepository = new ProductsRepository(1)
-
-const admin = true;
+const productsRepository = new ProductsRepository(6)
 
 const app = express();
 const httpServer = new HttpServer(app);
 const io = new Socket(httpServer);
+
+app.use(cookieParser('secret'))
+
+app.use(session({
+  secret: 'shhhhhhhhhhhhhhhhhhhhh',
+  resave: false,
+  saveUninitialized: false,
+  // cookie: { maxAge: 10000 },
+  rolling: true
+}))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -62,6 +72,69 @@ app.get("/api/fakeprods/:id?", cors(), (req, res) => {
 });
 
 // API PROD
+
+//********** SESSION  **********//
+
+const auth = (req, res, next) => {
+  if(req.session && req.session.user === "Lucas" && req.session.admin) {
+      return next();
+  } else {
+      return res.sendStatus(401);
+  }
+}
+
+app.get('/content', auth, (req, res) => { //prueba
+  res.send("redirecting to the login form")
+})
+
+app.post('/api/login', (req, res) => {
+  const data = req.body;
+  if(!data.username) {
+    res.send('login failed');
+  } else if(data.username === "Lucas") {
+    req.session.user = "Lucas";
+    req.session.admin = true;
+    res.json({"username": req.session.user})
+  }
+})
+
+app.get('/login', cors(), (req, res) => {
+  if(!req.query.username) {
+      res.send('login failed');
+  } else if(req.query.username === "Lucas") {
+      req.session.user = "Lucas";
+      req.session.admin = true;
+      res.redirect('http://localhost:3000/add')
+  }
+});
+
+app.get('/user', cors(), (req, res) => {
+  res.send({username: req.session.user})
+})
+
+// app.get('/', (req, res) => {
+//   if (req.session.contador) {
+//     req.session.contador++
+//     res.send(`${getNombreSession(req)} visitaste la página ${req.session.contador} veces.`)
+//   }
+//   else {
+//     req.session.nombre = req.query.nombre
+//     req.session.contador = 1
+//     res.send(`Te damos la bienvenida ${getNombreSession(req)}`)
+//   }
+// })
+
+app.get('/api/logout', (req, res) => {
+req.session.destroy(err => {
+  if (err) {
+    res.json({ error: 'logout', body: err })
+  } else {
+    res.redirect('http://localhost:3000/login')
+  }
+})
+})
+
+//********** SESSION  **********//
 
 app.get("/api/products", cors(), (req, res) => {
   // productsRepository.create(); // ifNotExist
@@ -123,8 +196,8 @@ app.get("/api/products/:id", cors(), (req, res) => {
   })
 });
 
-app.post("/api/products", (req, res) => {
-  if (admin) {
+app.post("/api/products", auth, cors(), (req, res) => {
+  if (req.session && req.session.user === "Lucas" && req.session.admin) {
     const data = req.body;
     productsRepository.insert(data).then(() => {
       res.json(data)
@@ -137,8 +210,8 @@ app.post("/api/products", (req, res) => {
   }
 });
 
-app.put("/api/products/:id", (req, res) => {
-  if (admin) {
+app.put("/api/products/:id", auth, (req, res) => {
+  if (req.session && req.session.user === "Lucas" && req.session.admin) {
     const data = req.body;
     const { id } = req.params;
     productsRepository.updateById(id, data).then(() => {
@@ -151,8 +224,8 @@ app.put("/api/products/:id", (req, res) => {
   }
 });
 
-app.delete("/api/products/:id", (req, res) => {
-  if (admin) {
+app.delete("/api/products/:id", auth, (req, res) => {
+  if (req.session && req.session.user === "Lucas" && req.session.admin) {
     const { id } = req.params;
     productsRepository.deleteById(id).then(() => {
       res.json(`product with id ${id} deleted`)

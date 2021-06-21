@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 function ItemDetail() {
+  const [dataUser, setDataUser] = useState([]);
   const [itemData, setItemData] = useState([]);
   const { id } = useParams();
   const url = `http://localhost:3000/api/products/${id}`;
@@ -23,6 +24,17 @@ function ItemDetail() {
     getWithFetch();
   }, []);
 
+  useEffect(() => {
+    fetch("/user")
+        .then(res => res.json())
+        .then(res => setDataUser(res))
+        .catch(err => {
+            console.log(err);
+        });
+  }, []);
+
+  console.log()
+
   const getWithFetch = async () => {
     const response = await fetch(url);
     const jsonData = await response.json();
@@ -40,6 +52,15 @@ function ItemDetail() {
     fetch(urlCart, {
       method: "POST",
       body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
+
+  const logOut = () => {
+    fetch("/api/logout", {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
@@ -110,8 +131,11 @@ function ItemDetail() {
           </div>
         </div>
       </div>
-      <div>
-        <Link to="/">
+
+      {dataUser.username ? (
+        <div>
+          <h2 className="bg-info">Welcome {dataUser.username}!</h2> <Link to="/login"><p className="bg-light" onClick={logOut}>Logout</p></Link>
+          <Link to="/">
           <button onClick={deleteProd} className="btn btn-dark" type="">
             Delete
           </button>
@@ -121,12 +145,17 @@ function ItemDetail() {
             Update
           </button>
         </Link>
-        <Link to='/cart'>
-          <button onClick={addToCart} className="btn btn-primary" type="">
-            Add to Cart
-          </button>
-        </Link>
-      </div>
+        </div>
+      ) : (
+        <div>
+          <Link to='/cart'>
+            <button onClick={addToCart} className="btn btn-primary" type="">
+              Add to Cart
+            </button>
+          </Link>
+        </div>
+      )}
+
     </section>
 
 )}</div>

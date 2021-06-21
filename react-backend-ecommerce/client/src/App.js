@@ -11,6 +11,7 @@ import Cart from './components/Cart/Cart';
 import CartDetail from "./components/CartDetail/CartDetail";
 import FakeItemsContainer from './components/FakeItemsContainer/FakeItemsContainer';
 import FakeItemDetail from './components/FakeItemDetail/FakeItemDetail';
+import LoginForm from './components/LoginForm/LoginForm';
 
 class App extends Component {
   render() {
@@ -20,6 +21,9 @@ class App extends Component {
         <Switch>
           <Route exact path="/"> 
             <Home />
+          </Route>
+          <Route exact path="/login"> 
+            <LoginForm />
           </Route>
           <Route exact path="/products">
             <ItemListContainer />

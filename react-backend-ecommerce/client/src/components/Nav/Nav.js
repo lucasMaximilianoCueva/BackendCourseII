@@ -17,6 +17,9 @@ function Nav () {
             <Link to='/add' className="navbar-brand">
                 Add
             </Link>
+            <Link to='/login' className="navbar-brand">
+                Login
+            </Link>
             </div>
             
         </nav>

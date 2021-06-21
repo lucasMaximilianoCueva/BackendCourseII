@@ -1,18 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 
 const postUrl = "http://localhost:5000/api/products";
 
-const admin = true;
-
 function Add() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetch("/user")
+        .then(res => res.json())
+        .then(res => setData(res))
+        .catch(err => {
+            console.log(err);
+        });
+  }, []);
+
+  const logOut = () => {
+    fetch("/api/logout", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
+
     return (
       <div>
-      {!admin ? (
-        <h1>ADMIN FALSE</h1>
+      {!data.username ? (
+        <Link to='/login'><h1>Please Login</h1></Link>
       ) : (
         <div className="loginForm col-lg-5 col-md-8 col-sm-8 p-4">
         <div className="loginHeader pt-3 pb-4">
+          <h2 className="bg-info">Welcome {data.username}!</h2> <Link to="/login"><p className="bg-light" onClick={logOut}>Logout</p></Link>
           <h4>Product Form</h4>
           <p>Type a Product!</p>
         </div>

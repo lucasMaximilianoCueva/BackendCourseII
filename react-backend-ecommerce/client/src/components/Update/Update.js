@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 function Update() {
+  const [dataUser, setDataUser] = useState([]);
   const [itemData, setItemData] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -10,18 +11,27 @@ function Update() {
   const [thumbnail, setThumbnail] = useState("");
 
   useEffect(() => {
+    fetch("/user")
+        .then(res => res.json())
+        .then(res => setDataUser(res))
+        .catch(err => {
+            console.log(err);
+        });
+  }, []);
+
+  useEffect(() => {
     getWithFetch();
   }, []);
 
   const getWithFetch = async () => {
     const response = await fetch(url);
     const jsonData = await response.json();
-    setItemData(jsonData[0])
+    setItemData(jsonData) //FS - ServerMemory - Firebase
+    // setItemData(jsonData[0])  //MYSQL - SQLite3 - MongoDB
   };
 
   const { id } = useParams();
   const url = `/api/products/${id}`;
-  const admin = true;
   const data = {
     title: title,
     description: description,
@@ -43,13 +53,23 @@ function Update() {
       .then((response) => console.log("Success:", response));
   };
 
+  const logOut = () => {
+    fetch("/api/logout", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
+
   return (
     <div>
-      {!admin ? (
-        <h1>ADMIN FALSE</h1>
+      {!dataUser.username ? (
+        <Link to='/login'><h1>Please Login</h1></Link>
       ) : (
         <div className="loginForm col-lg-5 col-md-8 col-sm-8 p-4">
           <div className="loginHeader pt-3 pb-4">
+          <h2 className="bg-info">Welcome {dataUser.username}!</h2> <Link to="/login"><p className="bg-light" onClick={logOut}>Logout</p></Link>
             <h4>Product Form</h4>
             <p>Type a Product!</p>
           </div>
