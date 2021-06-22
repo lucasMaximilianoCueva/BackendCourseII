@@ -3,6 +3,7 @@ import { Server as HttpServer } from 'http';
 import { Server as Socket } from 'socket.io';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import mongoStore from 'connect-mongo'
 import cors from "cors";
 import { cartDb } from "./cart.js";
 import { chat } from "./chat.js";
@@ -18,10 +19,13 @@ const io = new Socket(httpServer);
 app.use(cookieParser('secret'))
 
 app.use(session({
+  store: mongoStore.create({ mongoUrl: 'mongodb+srv://reactExpressDB:42707519@cluster0.7ezer.mongodb.net/ecommerce?retryWrites=true&w=majority',
+  ttl: 60
+}),
   secret: 'shhhhhhhhhhhhhhhhhhhhh',
   resave: false,
   saveUninitialized: false,
-  // cookie: { maxAge: 10000 },
+  // cookie: { maxAge: 1000 * 600 },
   rolling: true
 }))
 
