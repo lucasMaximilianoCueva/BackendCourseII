@@ -20,6 +20,9 @@ function Nav () {
             <Link to='/login' className="navbar-brand">
                 Login
             </Link>
+            <Link to='/register' className="navbar-brand">
+                Register
+            </Link>
             </div>
             
         </nav>

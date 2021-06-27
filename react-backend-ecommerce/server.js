@@ -9,8 +9,12 @@ import { cartDb } from "./cart.js";
 import { chat } from "./chat.js";
 import { ProductsRepository } from "./Core/ProductsRepository.js";
 import { prodFaker } from "./Core/prodFaker.js";
+import bCrypt from 'bcrypt';
+import passport from "passport";
+import Strategy from 'passport-local'
 
 const productsRepository = new ProductsRepository(6)
+const LocalStrategy = Strategy.Strategy;
 
 const app = express();
 const httpServer = new HttpServer(app);
@@ -31,6 +35,8 @@ app.use(session({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get("/api/cart", cors(), (req, res) => {
   res.json(cartDb.getCart());
@@ -79,11 +85,53 @@ app.get("/api/fakeprods/:id?", cors(), (req, res) => {
 
 //********** SESSION  **********//
 
+// PASSPORT
+
+const users = [];
+
+passport.use('register', new LocalStrategy({ passReqToCallback: true }, (req, username, password, done) => {
+  const { email } = req.body
+
+  const user = users.find(u => u.username == username)
+  if(user) {
+    return done('Already registered')
+  }
+  const User = {
+    username: req.body,
+    password: req.body,
+    email: req.body
+  }
+  users.push(User);
+
+  return done(null, user)
+}))
+
+passport.use('login', new LocalStrategy((username, password, done) => {
+  const user = users.find(u => u.username == username)
+
+  if(!user) {
+    return done(null, false)
+  }
+  if(user.password !== password) {
+    return done(null, false)
+  }
+  return done(null, user)
+}))
+
+passport.serializeUser(function (user, done) {
+  done(null, user.username);
+});
+
+passport.deserializeUser(function (username, done) {
+  const user = users.find(u => u.username == username)
+  done(null, user)
+})
+ 
 const auth = (req, res, next) => {
-  if(req.session && req.session.user === "Lucas" && req.session.admin) {
-      return next();
+  if(req.isAuthenticated()) {
+    next();
   } else {
-      return res.sendStatus(401);
+    return res.sendStatus(401);
   }
 }
 
@@ -91,26 +139,15 @@ app.get('/content', auth, (req, res) => { //prueba
   res.send("redirecting to the login form")
 })
 
-app.post('/api/login', (req, res) => {
-  const data = req.body;
-  if(!data.username) {
-    res.send('login failed');
-  } else if(data.username === "Lucas") {
-    req.session.user = "Lucas";
-    req.session.admin = true;
-    res.json({"username": req.session.user})
-  }
-})
+app.post('/api/register', passport.authenticate('register', { 
+  failureRedirect: '/failregister',
+  successRedirect: 'http://localhost:3000/login'
+}));
 
-app.get('/login', cors(), (req, res) => {
-  if(!req.query.username) {
-      res.send('login failed');
-  } else if(req.query.username === "Lucas") {
-      req.session.user = "Lucas";
-      req.session.admin = true;
-      res.redirect('http://localhost:3000/add')
-  }
-});
+app.post('/api/login', passport.authenticate('login', {
+  failureRedirect: '/faillogin',
+  successRedirect: '/'
+}));
 
 app.get('/user', cors(), (req, res) => {
   res.send({username: req.session.user})

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 function LoginForm() {
-    const url = '/api/login'
+    const url = '/api/register'
     const [dataUserName, setDataUserName] = useState([]);
     const [dataUserPass, setDataUserPass] = useState([]);
 
@@ -17,7 +17,7 @@ function LoginForm() {
         setDataUserPass(e.target.value)
     }
 
-    const login = () => {
+    const register = () => {
         fetch(url, {
           method: "POST",
           body: JSON.stringify(data),
@@ -47,7 +47,7 @@ function LoginForm() {
                     placeholder="password"
                     required
                     ></input>
-                    <button onClick={login} type="submit">Login</button>
+                    <button onClick={register} type="submit" >Login</button>
             </div>
         </div>
     )
