@@ -1,56 +1,60 @@
 import React, { useState } from 'react';
+import Axios from "axios";
+import { Link } from 'react-router-dom';
 
 function LoginForm() {
-    const url = '/api/login'
     const [dataUserName, setDataUserName] = useState([]);
     const [dataUserPass, setDataUserPass] = useState([]);
 
-    const data = {
-        "username": dataUserName,
-        "password": parseInt(dataUserPass, 10)
-    }
-
-    const onChangeName = (e) => {
-        setDataUserName(e.target.value)
-    }
-    const onChangePass = (e) => {
-        setDataUserPass(e.target.value)
-    }
-
     const login = () => {
-        fetch(url, {
+        Axios({
           method: "POST",
-          body: JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json",
+          data: {
+            username: dataUserName,
+            password: dataUserPass,
           },
+          withCredentials: true,
+          url: '/api/login',
+        }).then((res) => {
+            const data = res.data;
+            const status = res.status;
+            if(data === "No User Exists") {
+                window.location = "/faillogin"
+            } else if(status === 200 && data !== "No User Exists") {
+                window.location = "/add"
+            }
         });
-        console.log(data)
       };
 
     return (
-        <div className="container">
-            <div>
-                    <input
-                    onChange={onChangeName}
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="username"
-                    required
-                    ></input>
-                    <input
-                    onChange={onChangePass}
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="password"
-                    required
-                    ></input>
-                    <button onClick={login} type="submit">Login</button>
-            </div>
+      <div className="container">
+        <h3>Login</h3>
+        <div>
+          <input
+            onChange={(e) => setDataUserName(e.target.value)}
+            type="text"
+            id="username"
+            name="username"
+            placeholder="username"
+            required
+          ></input>
+          <input
+            onChange={(e) => setDataUserPass(e.target.value)}
+            type="password"
+            id="password"
+            name="password"
+            placeholder="password"
+            required
+          ></input>
+          <button onClick={login} type="submit">
+            Login
+          </button>
         </div>
-    )
+        <Link to="/register">
+          <p>Create an Account</p>
+        </Link>
+      </div>
+    );
 }
 
 export default LoginForm;

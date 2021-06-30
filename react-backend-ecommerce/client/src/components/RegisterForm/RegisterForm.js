@@ -1,56 +1,60 @@
 import React, { useState } from 'react';
+import Axios from "axios";
+import { Link } from 'react-router-dom';
 
 function LoginForm() {
-    const url = '/api/register'
     const [dataUserName, setDataUserName] = useState([]);
     const [dataUserPass, setDataUserPass] = useState([]);
 
-    const data = {
-        "username": dataUserName,
-        "password": parseInt(dataUserPass, 10)
-    }
-
-    const onChangeName = (e) => {
-        setDataUserName(e.target.value)
-    }
-    const onChangePass = (e) => {
-        setDataUserPass(e.target.value)
-    }
-
-    const register = () => {
-        fetch(url, {
+      const register = () => {
+        Axios({
           method: "POST",
-          body: JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json",
+          data: {
+            username: dataUserName,
+            password: dataUserPass,
           },
+          withCredentials: true,
+          url: '/api/register',
+        }).then((res) => {
+            const data = res.data;
+            const status = res.status;
+            if(data === "User Already Exists") {
+                window.location = "/failregister"
+            } else if(status === 200 && data !== "User Already Exists") {
+                window.location = "/login"
+            }
         });
-        console.log(data)
-      };
+      };  
 
     return (
-        <div className="container">
-            <div>
-                    <input
-                    onChange={onChangeName}
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="username"
-                    required
-                    ></input>
-                    <input
-                    onChange={onChangePass}
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="password"
-                    required
-                    ></input>
-                    <button onClick={register} type="submit" >Login</button>
-            </div>
+      <div className="container">
+        <h3>Register</h3>
+        <div>
+          <input
+            onChange={(e) => setDataUserName(e.target.value)}
+            type="text"
+            id="username"
+            name="username"
+            placeholder="username"
+            required
+          ></input>
+          <input
+            onChange={(e) => setDataUserPass(e.target.value)}
+            type="password"
+            id="password"
+            name="password"
+            placeholder="password"
+            required
+          ></input>
+          <button onClick={register} type="submit">
+            Register
+          </button>
         </div>
-    )
+        <Link to="/login">
+          <p>Access your Account</p>
+        </Link>
+      </div>
+    );
 }
 
 export default LoginForm;

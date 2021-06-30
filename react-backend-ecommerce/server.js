@@ -7,14 +7,16 @@ import mongoStore from 'connect-mongo'
 import cors from "cors";
 import { cartDb } from "./cart.js";
 import { chat } from "./chat.js";
-import { ProductsRepository } from "./Core/ProductsRepository.js";
-import { prodFaker } from "./Core/prodFaker.js";
-import bCrypt from 'bcrypt';
+import { ProductsRepository } from "./Config/ProductsRepository.js";
+import { prodFaker } from "./Config/prodFaker.js";
 import passport from "passport";
-import Strategy from 'passport-local'
+import passportConfig from './Config/passportConfig.js';
+import mongoose from 'mongoose';
+import User from './Config/user.js';
+import bcrypt from 'bcrypt';
 
 const productsRepository = new ProductsRepository(6)
-const LocalStrategy = Strategy.Strategy;
+
 
 const app = express();
 const httpServer = new HttpServer(app);
@@ -26,10 +28,10 @@ app.use(session({
   store: mongoStore.create({ mongoUrl: 'mongodb+srv://reactExpressDB:42707519@cluster0.7ezer.mongodb.net/ecommerce?retryWrites=true&w=majority',
   ttl: 60
 }),
-  secret: 'shhhhhhhhhhhhhhhhhhhhh',
+  secret: '123-456-789',
   resave: false,
   saveUninitialized: false,
-  // cookie: { maxAge: 1000 * 600 },
+  cookie: { maxAge: 1000 * 600 },
   rolling: true
 }))
 
@@ -37,6 +39,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+passportConfig(passport);
 
 app.get("/api/cart", cors(), (req, res) => {
   res.json(cartDb.getCart());
@@ -81,101 +84,73 @@ app.get("/api/fakeprods/:id?", cors(), (req, res) => {
   }
 });
 
-// API PROD
+//----------------------------------------- PASSPORT ---------------------------------------------------
 
-//********** SESSION  **********//
-
-// PASSPORT
-
-const users = [];
-
-passport.use('register', new LocalStrategy({ passReqToCallback: true }, (req, username, password, done) => {
-  const { email } = req.body
-
-  const user = users.find(u => u.username == username)
-  if(user) {
-    return done('Already registered')
+mongoose.createConnection(
+  'mongodb+srv://reactExpressDB:42707519@cluster0.7ezer.mongodb.net/ecommerce?retryWrites=true&w=majority',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+  () => {
+    console.log("mongoDB connected (user)");
   }
-  const User = {
-    username: req.body,
-    password: req.body,
-    email: req.body
-  }
-  users.push(User);
+);
 
-  return done(null, user)
-}))
+app.post("/api/register", (req, res) => {
+  User.findOne({ username: req.body.username }, async (err, doc) => {
+    if (err) throw err;
+    if (doc) res.send("User Already Exists");
+    if (!doc) {
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-passport.use('login', new LocalStrategy((username, password, done) => {
-  const user = users.find(u => u.username == username)
-
-  if(!user) {
-    return done(null, false)
-  }
-  if(user.password !== password) {
-    return done(null, false)
-  }
-  return done(null, user)
-}))
-
-passport.serializeUser(function (user, done) {
-  done(null, user.username);
+      const newUser = new User({
+        username: req.body.username,
+        password: hashedPassword,
+      });
+      await newUser.save();
+      res.send("User Created");
+    }
+  });
 });
 
-passport.deserializeUser(function (username, done) {
-  const user = users.find(u => u.username == username)
-  done(null, user)
-})
- 
-const auth = (req, res, next) => {
-  if(req.isAuthenticated()) {
-    next();
-  } else {
-    return res.sendStatus(401);
-  }
-}
+app.post("/api/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) throw err;
+    if (!user) res.send("No User Exists");
+    else {
+      req.logIn(user, (err) => {
+        if (err) throw err;
+        res.send("Successfully Authenticated");
+        console.log(req.user);
+      });
+    }
+  })(req, res, next);
+});
 
-app.get('/content', auth, (req, res) => { //prueba
-  res.send("redirecting to the login form")
-})
+app.get("/user", (req, res) => {
+  res.send(req.user);
+});
 
-app.post('/api/register', passport.authenticate('register', { 
-  failureRedirect: '/failregister',
-  successRedirect: 'http://localhost:3000/login'
-}));
-
-app.post('/api/login', passport.authenticate('login', {
-  failureRedirect: '/faillogin',
-  successRedirect: '/'
-}));
-
-app.get('/user', cors(), (req, res) => {
-  res.send({username: req.session.user})
-})
-
-// app.get('/', (req, res) => {
-//   if (req.session.contador) {
-//     req.session.contador++
-//     res.send(`${getNombreSession(req)} visitaste la página ${req.session.contador} veces.`)
-//   }
-//   else {
-//     req.session.nombre = req.query.nombre
-//     req.session.contador = 1
-//     res.send(`Te damos la bienvenida ${getNombreSession(req)}`)
-//   }
-// })
-
-app.get('/api/logout', (req, res) => {
-req.session.destroy(err => {
-  if (err) {
-    res.json({ error: 'logout', body: err })
+const isAuth = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    next()
   } else {
     res.redirect('http://localhost:3000/login')
   }
-})
-})
+}
 
-//********** SESSION  **********//
+app.get('/api/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      res.json({ error: 'logout', body: err })
+    } else {
+      res.redirect('http://localhost:3000/login')
+    }
+  })
+  })
+
+//----------------------------------------- END PASSPORT ---------------------------------------------------
 
 app.get("/api/products", cors(), (req, res) => {
   // productsRepository.create(); // ifNotExist
@@ -237,8 +212,8 @@ app.get("/api/products/:id", cors(), (req, res) => {
   })
 });
 
-app.post("/api/products", auth, cors(), (req, res) => {
-  if (req.session && req.session.user === "Lucas" && req.session.admin) {
+app.post("/api/products", (req, res) => {
+  if (isAuth) {
     const data = req.body;
     productsRepository.insert(data).then(() => {
       res.json(data)
@@ -251,7 +226,7 @@ app.post("/api/products", auth, cors(), (req, res) => {
   }
 });
 
-app.put("/api/products/:id", auth, (req, res) => {
+app.put("/api/products/:id", isAuth, (req, res) => {
   if (req.session && req.session.user === "Lucas" && req.session.admin) {
     const data = req.body;
     const { id } = req.params;
@@ -265,8 +240,8 @@ app.put("/api/products/:id", auth, (req, res) => {
   }
 });
 
-app.delete("/api/products/:id", auth, (req, res) => {
-  if (req.session && req.session.user === "Lucas" && req.session.admin) {
+app.delete("/api/products/:id", isAuth, (req, res) => {
+  if (isAuth) {
     const { id } = req.params;
     productsRepository.deleteById(id).then(() => {
       res.json(`product with id ${id} deleted`)

@@ -13,6 +13,8 @@ import FakeItemsContainer from './components/FakeItemsContainer/FakeItemsContain
 import FakeItemDetail from './components/FakeItemDetail/FakeItemDetail';
 import LoginForm from './components/LoginForm/LoginForm';
 import RegisterForm from './components/RegisterForm/RegisterForm';
+import FailLogin from "./components/FailRegisterLogin/FailLogin";
+import FailRegister from "./components/FailRegisterLogin/FailRegister";
 
 class App extends Component {
   render() {
@@ -28,6 +30,12 @@ class App extends Component {
           </Route>
           <Route exact path="/login"> 
             <LoginForm />
+          </Route>
+          <Route exact path="/faillogin"> 
+            <FailLogin />
+          </Route>
+          <Route exact path="/failregister"> 
+            <FailRegister />
           </Route>
           <Route exact path="/products">
             <ItemListContainer />
