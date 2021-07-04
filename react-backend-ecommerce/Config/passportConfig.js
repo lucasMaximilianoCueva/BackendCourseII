@@ -1,36 +1,27 @@
-import User from './user.js';
-import bcrypt from 'bcrypt';
-import Strategy from 'passport-local'
-const localStrategy = Strategy.Strategy;
+import facebook from 'passport-facebook'
+const facebookStrategy = facebook.Strategy;
+
+
 
 const passportConfig = (passport) => {
   passport.use(
-    new localStrategy((username, password, done) => {
-      User.findOne({ username: username }, (err, user) => {
-        if (err) throw err;
-        if (!user) return done(null, false);
-        bcrypt.compare(password, user.password, (err, result) => {
-          if (err) throw err;
-          if (result === true) {
-            return done(null, user);
-          } else {
-            return done(null, false);
-          }
-        });
-      });
-    })
-  );
+    new facebookStrategy({
+      clientID: '',
+      clientSecret: '',
+      callbackURL: '/auth/facebook/callback',
+      profileFields: ['id', 'displayName', 'photos', 'emails'],
+      scope: ['email']
+  }, function (accessToken, refreshToken, userProfile, done) {
+      console.log(userProfile)
+      return done(null, userProfile);
+  }));
 
-  passport.serializeUser((user, cb) => {
-    cb(null, user.id);
+  passport.serializeUser(function (user, cb) {
+    cb(null, user);
   });
-  passport.deserializeUser((id, cb) => {
-    User.findOne({ _id: id }, (err, user) => {
-      const userInformation = {
-        username: user.username,
-      };
-      cb(err, userInformation);
-    });
+
+  passport.deserializeUser(function (obj, cb) {
+      cb(null, obj);
   });
 };
 

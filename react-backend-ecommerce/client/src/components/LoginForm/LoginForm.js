@@ -26,6 +26,16 @@ function LoginForm() {
         });
       };
 
+      const facebook = () => {
+        Axios({
+          method: "GET",
+          withCredentials: true,
+          url: '/auth/facebook',
+        }).then(() => {
+            window.location = "/"
+        });
+      };
+
     return (
       <div className="container">
         <h3>Login</h3>
@@ -48,6 +58,9 @@ function LoginForm() {
           ></input>
           <button onClick={login} type="submit">
             Login
+          </button>
+          <button onClick={facebook} type="submit">
+            Login with Facebok
           </button>
         </div>
         <Link to="/register">

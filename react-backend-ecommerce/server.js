@@ -1,26 +1,20 @@
 import express from "express";
 import { Server as HttpServer } from 'http';
-import { Server as Socket } from 'socket.io';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import mongoStore from 'connect-mongo'
 import cors from "cors";
 import { cartDb } from "./cart.js";
-import { chat } from "./chat.js";
 import { ProductsRepository } from "./Config/ProductsRepository.js";
 import { prodFaker } from "./Config/prodFaker.js";
 import passport from "passport";
 import passportConfig from './Config/passportConfig.js';
-import mongoose from 'mongoose';
-import User from './Config/user.js';
-import bcrypt from 'bcrypt';
 
 const productsRepository = new ProductsRepository(6)
 
 
 const app = express();
 const httpServer = new HttpServer(app);
-const io = new Socket(httpServer);
 
 app.use(cookieParser('secret'))
 
@@ -86,50 +80,15 @@ app.get("/api/fakeprods/:id?", cors(), (req, res) => {
 
 //----------------------------------------- PASSPORT ---------------------------------------------------
 
-mongoose.createConnection(
-  'mongodb+srv://reactExpressDB:42707519@cluster0.7ezer.mongodb.net/ecommerce?retryWrites=true&w=majority',
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  },
-  () => {
-    console.log("mongoDB connected (user)");
-  }
-);
+app.get('/auth/facebook', passport.authenticate('facebook'));
 
-app.post("/api/register", (req, res) => {
-  User.findOne({ username: req.body.username }, async (err, doc) => {
-    if (err) throw err;
-    if (doc) res.send("User Already Exists");
-    if (!doc) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-      const newUser = new User({
-        username: req.body.username,
-        password: hashedPassword,
-      });
-      await newUser.save();
-      res.send("User Created");
-    }
-  });
-});
-
-app.post("/api/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) throw err;
-    if (!user) res.send("No User Exists");
-    else {
-      req.logIn(user, (err) => {
-        if (err) throw err;
-        res.send("Successfully Authenticated");
-        console.log(req.user);
-      });
-    }
-  })(req, res, next);
-});
+app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+    successRedirect: '/',
+    failureRedirect: '/faillogin'
+}));
 
 app.get("/user", (req, res) => {
-  res.send(req.user);
+  res.send(req.user.displayName);
 });
 
 const isAuth = (req, res, next) => {
@@ -251,28 +210,6 @@ app.delete("/api/products/:id", isAuth, (req, res) => {
       `"error" : 'does not have permissions', "description": route = '${req.url}' method = '${req.method}' not authorized`
     );
   }
-});
-
-//SOCKET.IO
-
-io.on("connection", socket => {
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-  console.log('user connected!')
-
-  chat.list().then((list) => {
-    socket.emit("messages", list );
-  })
-
-
-  socket.on("new-message", data => {
-    chat.insert(data).then(() => {
-    })
-    chat.list().then((list) => {
-      io.emit("messages", list );
-    })
-  });
 });
 
 const port = 5000;
