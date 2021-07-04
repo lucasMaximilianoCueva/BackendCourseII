@@ -86,7 +86,7 @@ app.get("/api/fakeprods/:id?", cors(), (req, res) => {
 
 //----------------------------------------- PASSPORT ---------------------------------------------------
 
-mongoose.createConnection(
+mongoose.connect(
   'mongodb+srv://reactExpressDB:42707519@cluster0.7ezer.mongodb.net/ecommerce?retryWrites=true&w=majority',
   {
     useNewUrlParser: true,
