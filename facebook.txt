@@ -1,2 +1,0 @@
-      clientID: '781143392460109',
-      clientSecret: '1ea39fa0aaf5d0250355b24d9c8de8c5'

@@ -12,7 +12,6 @@ const passportConfig = (passport) => {
       profileFields: ['id', 'displayName', 'photos', 'emails'],
       scope: ['email']
   }, function (accessToken, refreshToken, userProfile, done) {
-      console.log(userProfile)
       return done(null, userProfile);
   }));
 

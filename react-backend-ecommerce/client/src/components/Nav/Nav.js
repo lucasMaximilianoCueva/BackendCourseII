@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 
 function Nav () {
+    const [dataUser, setDataUser] = useState([]);
+
+    useEffect(() => {
+        fetch("/user")
+            .then(res => res.json())
+            .then(res => setDataUser(res))
+            .catch(err => {
+                console.log(err);
+            });
+      }, []);
     return (
         <nav className="navbar navbar-light bg-light">
             <Link to='/' className="navbar-brand">
@@ -17,12 +27,12 @@ function Nav () {
             <Link to='/add' className="navbar-brand">
                 Add
             </Link>
-            <Link to='/login' className="navbar-brand">
+            { !dataUser.name && <Link to='/login' className="navbar-brand">
                 Login
-            </Link>
-            <Link to='/register' className="navbar-brand">
+            </Link> }
+            { !dataUser.name &&<Link to='/register' className="navbar-brand">
                 Register
-            </Link>
+            </Link> }
             </div>
             
         </nav>

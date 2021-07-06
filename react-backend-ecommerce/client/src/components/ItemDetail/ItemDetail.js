@@ -132,9 +132,9 @@ function ItemDetail() {
         </div>
       </div>
 
-      {dataUser.username ? (
+      {dataUser.name ? (
         <div>
-          <h2 className="bg-info">Welcome {dataUser.username}!</h2> <Link to="/login"><p className="bg-light" onClick={logOut}>Logout</p></Link>
+          <h2 className="bg-info">Welcome {dataUser.name}!</h2> <Link to="/login"><p className="bg-light" onClick={logOut}>Logout</p></Link>
           <Link to="/">
           <button onClick={deleteProd} className="btn btn-dark" type="">
             Delete

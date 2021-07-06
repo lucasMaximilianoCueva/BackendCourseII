@@ -80,15 +80,19 @@ app.get("/api/fakeprods/:id?", cors(), (req, res) => {
 
 //----------------------------------------- PASSPORT ---------------------------------------------------
 
-app.get('/auth/facebook', passport.authenticate('facebook'));
+app.get('/auth/facebook', cors(), passport.authenticate('facebook'));
 
-app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-    successRedirect: '/',
+app.get('/auth/facebook/callback', cors(), passport.authenticate('facebook', {
+    successRedirect: 'http://localhost:3000/',
     failureRedirect: '/faillogin'
 }));
 
 app.get("/user", (req, res) => {
-  res.send(req.user.displayName);
+  res.json({
+    name: req.user.displayName,
+    photo: req.user.photos[0].value,
+    email: req.user.emails[0].value,
+});
 });
 
 const isAuth = (req, res, next) => {
@@ -100,13 +104,8 @@ const isAuth = (req, res, next) => {
 }
 
 app.get('/api/logout', (req, res) => {
-  req.session.destroy(err => {
-    if (err) {
-      res.json({ error: 'logout', body: err })
-    } else {
-      res.redirect('http://localhost:3000/login')
-    }
-  })
+  req.logout();
+  res.redirect('/')
   })
 
 //----------------------------------------- END PASSPORT ---------------------------------------------------

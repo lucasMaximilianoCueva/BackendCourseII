@@ -64,12 +64,12 @@ function Update() {
 
   return (
     <div>
-      {!dataUser.username ? (
+      {!dataUser.name ? (
         <Link to='/login'><h1>Please Login</h1></Link>
       ) : (
         <div className="loginForm col-lg-5 col-md-8 col-sm-8 p-4">
           <div className="loginHeader pt-3 pb-4">
-          <h2 className="bg-info">Welcome {dataUser.username}!</h2> <Link to="/login"><p className="bg-light" onClick={logOut}>Logout</p></Link>
+          <h2 className="bg-info">Welcome {dataUser.name}!</h2> <Link to="/login"><p className="bg-light" onClick={logOut}>Logout</p></Link>
             <h4>Product Form</h4>
             <p>Type a Product!</p>
           </div>
