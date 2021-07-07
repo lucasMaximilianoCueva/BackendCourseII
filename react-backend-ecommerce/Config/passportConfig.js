@@ -6,8 +6,8 @@ const facebookStrategy = facebook.Strategy;
 const passportConfig = (passport) => {
   passport.use(
     new facebookStrategy({
-      clientID: '',
-      clientSecret: '',
+      clientID: '285367766706574',
+      clientSecret: '48cc6580360da394ca2fb3eee0ebe982',
       callbackURL: '/auth/facebook/callback',
       profileFields: ['id', 'displayName', 'photos', 'emails'],
       scope: ['email']
