@@ -12,7 +12,6 @@ import passportConfig from './Config/passportConfig.js';
 
 const productsRepository = new ProductsRepository(6)
 
-
 const app = express();
 const httpServer = new HttpServer(app);
 
@@ -109,6 +108,52 @@ app.get('/api/logout', (req, res) => {
   })
 
 //----------------------------------------- END PASSPORT ---------------------------------------------------
+
+//----------------------------------------- INFO - RANDOMS ---------------------------------------------------
+
+app.get("/api/info", cors(), (req, res) => {
+  res.json({
+    inputArguments: process.argv,
+    platformName: process.platform,
+    nodejsVersion: process.version,
+    memoryUsage: process.memoryUsage(),
+    executionPath: process.execPath,
+    processId: process.pid,
+    currentFolder: process.cwd
+  });
+});
+
+app.get("/api/randoms", cors(), (req, res) => {
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+  const quantity = req.query.quan || 100000000
+
+  let arr = []
+
+  const calculate = (n) => { //cicle
+    let i = 0;
+    while (i < n) {
+      arr.push(getRandomInt(1, 1000)) 
+      i = i + 1;
+    }
+
+    let repeated = {};
+    
+    arr.forEach(function(num){
+      repeated[num] = (repeated[num] || 0) + 1;
+    });
+    
+    console.log(repeated);
+    return repeated
+  }
+
+  res.json({randoms: calculate(quantity)})
+
+});
+
+//-----------------------------------------  ---------------------------------------------------
 
 app.get("/api/products", cors(), (req, res) => {
   // productsRepository.create(); // ifNotExist
@@ -211,6 +256,6 @@ app.delete("/api/products/:id", isAuth, (req, res) => {
   }
 });
 
-const port = 5000;
+const port = process.argv[2] || 5000;
 
 httpServer.listen(port, () => `Server running on port ${port}`);

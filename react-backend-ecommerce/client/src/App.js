@@ -15,6 +15,7 @@ import LoginForm from './components/LoginForm/LoginForm';
 import RegisterForm from './components/RegisterForm/RegisterForm';
 import FailLogin from "./components/FailRegisterLogin/FailLogin";
 import FailRegister from "./components/FailRegisterLogin/FailRegister";
+import Info from "./components/Info/Info";
 
 class App extends Component {
   render() {
@@ -60,6 +61,9 @@ class App extends Component {
           </Route>
           <Route exact path="/cart/:id">
             <CartDetail />
+          </Route>
+          <Route exact path="/info">
+            <Info />
           </Route>
         </Switch>
       </BrowserRouter>
