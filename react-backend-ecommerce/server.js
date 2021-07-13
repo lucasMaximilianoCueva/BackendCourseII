@@ -127,34 +127,15 @@ app.get("/api/info", cors(), (req, res) => {
 // RANDOMS
 
 app.get("/api/randoms", cors(), (req, res) => {
-  // function getRandomInt(min, max) {
-  //   return Math.floor(Math.random() * (max - min)) + min;
-  // }
-  const calc_child = fork("./Config/calc.js")
-  calc_child.send("start")
-
   const quantity = req.query.quan || 100000000
 
-  // let arr = []
-
-  // const calculate = (n) => { //cicle
-  //   let i = 0;
-  //   while (i < n) {
-  //     arr.push(getRandomInt(1, 1000)) 
-  //     i = i + 1;
-  //   }
-
-  //   let repeated = {};
-    
-  //   arr.forEach(function(num){
-  //     repeated[num] = (repeated[num] || 0) + 1;
-  //   });
-    
-  //   console.log(repeated);
-  //   return repeated
-  // }
-
-  res.json({status: "OK"})
+  const forked = fork("./calc.js");
+  setTimeout(() => {
+    forked.send(quantity);
+  }, 1000)
+  forked.on("message", msg => {
+    res.json({randoms: msg}) 
+  })
 
 });
 

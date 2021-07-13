@@ -17,10 +17,12 @@ let arr = []
       repeated[num] = (repeated[num] || 0) + 1;
     });
     
-    console.log(repeated);
     return repeated
   }
 
   process.on("message", msg => {
-      if(msg === "start") calculate(100)
+    console.log(`father message: ${msg}`);
+    const calc = calculate(100)
+    process.send(calc)
+
   })
