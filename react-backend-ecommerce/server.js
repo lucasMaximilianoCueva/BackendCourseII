@@ -9,6 +9,7 @@ import { ProductsRepository } from "./Config/ProductsRepository.js";
 import { prodFaker } from "./Config/prodFaker.js";
 import passport from "passport";
 import passportConfig from './Config/passportConfig.js';
+import { fork } from 'child_process';
 
 const productsRepository = new ProductsRepository(6)
 
@@ -124,32 +125,15 @@ app.get("/api/info", cors(), (req, res) => {
 });
 
 app.get("/api/randoms", cors(), (req, res) => {
-  function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
-  }
+  const quantity = req.query.quan || 100000000;
 
-  const quantity = req.query.quan || 100000000
-
-  let arr = []
-
-  const calculate = (n) => { //cicle
-    let i = 0;
-    while (i < n) {
-      arr.push(getRandomInt(1, 1000)) 
-      i = i + 1;
-    }
-
-    let repeated = {};
-    
-    arr.forEach(function(num){
-      repeated[num] = (repeated[num] || 0) + 1;
-    });
-    
-    console.log(repeated);
-    return repeated
-  }
-
-  res.json({randoms: calculate(quantity)})
+  const forked = fork('./Config/calc.js');
+  setTimeout(() => {
+    forked.send(quantity);
+  }, 1000);
+  forked.on("message", msg => {
+    res.json({randoms: msg})
+  });
 
 });
 
