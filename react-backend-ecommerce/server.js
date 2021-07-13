@@ -9,6 +9,7 @@ import { ProductsRepository } from "./Config/ProductsRepository.js";
 import { prodFaker } from "./Config/prodFaker.js";
 import passport from "passport";
 import passportConfig from './Config/passportConfig.js';
+import { fork } from 'child_process';
 
 const productsRepository = new ProductsRepository(6)
 
@@ -123,33 +124,37 @@ app.get("/api/info", cors(), (req, res) => {
   });
 });
 
+// RANDOMS
+
 app.get("/api/randoms", cors(), (req, res) => {
-  function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
-  }
+  // function getRandomInt(min, max) {
+  //   return Math.floor(Math.random() * (max - min)) + min;
+  // }
+  const calc_child = fork("./Config/calc.js")
+  calc_child.send("start")
 
   const quantity = req.query.quan || 100000000
 
-  let arr = []
+  // let arr = []
 
-  const calculate = (n) => { //cicle
-    let i = 0;
-    while (i < n) {
-      arr.push(getRandomInt(1, 1000)) 
-      i = i + 1;
-    }
+  // const calculate = (n) => { //cicle
+  //   let i = 0;
+  //   while (i < n) {
+  //     arr.push(getRandomInt(1, 1000)) 
+  //     i = i + 1;
+  //   }
 
-    let repeated = {};
+  //   let repeated = {};
     
-    arr.forEach(function(num){
-      repeated[num] = (repeated[num] || 0) + 1;
-    });
+  //   arr.forEach(function(num){
+  //     repeated[num] = (repeated[num] || 0) + 1;
+  //   });
     
-    console.log(repeated);
-    return repeated
-  }
+  //   console.log(repeated);
+  //   return repeated
+  // }
 
-  res.json({randoms: calculate(quantity)})
+  res.json({status: "OK"})
 
 });
 
