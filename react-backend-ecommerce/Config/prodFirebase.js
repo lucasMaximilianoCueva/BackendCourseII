@@ -5,7 +5,6 @@ import creds from '../DB/creds.js'
 admin.initializeApp({
   credential: admin.credential.cert(creds),
 });
-console.log('base firebase conectada')
 
 export class ProductsDB {
     constructor() {

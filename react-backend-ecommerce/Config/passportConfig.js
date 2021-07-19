@@ -14,9 +14,7 @@ const passportConfig = (passport) => {
   }, function (accessToken, refreshToken, userProfile, done) {
       return done(null, userProfile);
   }));
-
-  console.log(process.argv)
-
+  
   passport.serializeUser(function (user, cb) {
     cb(null, user);
   });
