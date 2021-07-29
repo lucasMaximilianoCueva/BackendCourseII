@@ -12,6 +12,9 @@ import passportConfig from './Config/passportConfig.js';
 import { fork } from 'child_process';
 import cluster from 'cluster';
 import os from 'os';
+import User from './Config/user.js';
+import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 const numCPUs = os.cpus().length
 const clusterMode = process.argv[3] == 'CLUSTER';
@@ -37,7 +40,7 @@ const clusterMode = process.argv[3] == 'CLUSTER';
     const app = express();
     const httpServer = new HttpServer(app);
     
-    const PORT = process.argv[2] || 5000;
+    const PORT = process.env.PORT || 5000;
     
     httpServer.listen(PORT, err => {
       if (!err) console.log(`Servidor express escuchando en el puerto ${PORT} - PID WORKER ${process.pid}`)
@@ -107,19 +110,50 @@ const clusterMode = process.argv[3] == 'CLUSTER';
     
     //----------------------------------------- PASSPORT ---------------------------------------------------
     
-    app.get('/auth/facebook', cors(), passport.authenticate('facebook'));
+    mongoose.connect(
+      'mongodb+srv://reactExpressDB:42707519@cluster0.7ezer.mongodb.net/ecommerce?retryWrites=true&w=majority',
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+      () => {
+        console.log("mongoDB connected (user)");
+      }
+    );
     
-    app.get('/auth/facebook/callback', cors(), passport.authenticate('facebook', {
-        successRedirect: 'http://localhost:3000/',
-        failureRedirect: '/faillogin'
-    }));
+    app.post("/api/register", (req, res) => {
+      User.findOne({ username: req.body.username }, async (err, doc) => {
+        if (err) throw err;
+        if (doc) res.send("User Already Exists");
+        if (!doc) {
+          const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    
+          const newUser = new User({
+            username: req.body.username,
+            password: hashedPassword,
+          });
+          await newUser.save();
+          res.send("User Created");
+        }
+      });
+    });
+    
+    app.post("/api/login", (req, res, next) => {
+      passport.authenticate("local", (err, user, info) => {
+        if (err) throw err;
+        if (!user) res.send("No User Exists");
+        else {
+          req.logIn(user, (err) => {
+            if (err) throw err;
+            res.send("Successfully Authenticated");
+            console.log(req.user);
+          });
+        }
+      })(req, res, next);
+    });
     
     app.get("/user", (req, res) => {
-      res.json({
-        name: req.user.displayName,
-        photo: req.user.photos[0].value,
-        email: req.user.emails[0].value,
-    });
+      res.send(req.user);
     });
     
     const isAuth = (req, res, next) => {
@@ -131,8 +165,13 @@ const clusterMode = process.argv[3] == 'CLUSTER';
     }
     
     app.get('/api/logout', (req, res) => {
-      req.logout();
-      res.redirect('/')
+      req.session.destroy(err => {
+        if (err) {
+          res.json({ error: 'logout', body: err })
+        } else {
+          res.redirect('http://localhost:3000/login')
+        }
+      })
       })
     
     //----------------------------------------- END PASSPORT ---------------------------------------------------
