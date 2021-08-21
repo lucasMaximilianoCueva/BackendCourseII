@@ -6,7 +6,6 @@ import ItemDetailContainer from './components/ItemDetailContainer/ItemDetailCont
 import Cart from './components/Cart/Cart';
 import Nav from './components/Nav/Nav';
 import CartProvider from './context/cartContext';
-import BrandInfo from './components/BrandInfo/BrandInfo';
 import Add from "./components/Add/Add";
 import Update from "./components/Update/Update";
 import LoginForm from './components/LoginForm/LoginForm';
@@ -66,9 +65,6 @@ function App() {
           </Route>
           <Route exact path="/cart">
             <Cart />
-          </Route>
-          <Route exact path="/about">
-            <BrandInfo />
           </Route>
         </Switch>
     </BrowserRouter>
