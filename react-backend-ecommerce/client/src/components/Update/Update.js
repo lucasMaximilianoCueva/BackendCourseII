@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import pino from 'pino'
+
+const logger = pino({
+  prettyPrint: { colorize: true }
+});
 
 function Update() {
   const [dataUser, setDataUser] = useState([]);
@@ -15,19 +20,20 @@ function Update() {
         .then(res => res.json())
         .then(res => setDataUser(res))
         .catch(err => {
-            console.log(err);
+          logger.info(err);
         });
   }, []);
 
   useEffect(() => {
     getWithFetch();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getWithFetch = async () => {
     const response = await fetch(url);
     const jsonData = await response.json();
-    setItemData(jsonData) //FS - ServerMemory - Firebase
-    // setItemData(jsonData[0])  //MYSQL - SQLite3 - MongoDB
+    // setItemData(jsonData) //FS - ServerMemory - Firebase
+    setItemData(jsonData[0])  //MYSQL - SQLite3 - MongoDB
   };
 
   const { id } = useParams();
@@ -49,8 +55,8 @@ function Update() {
       },
     })
       .then((res) => res.json())
-      .catch((error) => console.error("Error:", error))
-      .then((response) => console.log("Success:", response));
+      .catch((error) => logger.error("Error:", error))
+      .then((response) => logger.info("Success:", response));
   };
 
   const logOut = () => {

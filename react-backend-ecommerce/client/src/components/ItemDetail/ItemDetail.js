@@ -1,164 +1,92 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import "./ItemDetail.scss";
+import ItemCount from "../ItemCount/ItemCount";
+import { Link } from "react-router-dom";
+import { useCartContext } from "../../context/cartContext";
+import "./ItemDetail.scss";
+import pino from 'pino'
 
-function ItemDetail() {
+const logger = pino({
+  prettyPrint: { colorize: true }
+});
+
+function ItemDetail({ item }) {
+  const [detailData, setDetailData] = useState({});
+  const [addedToCart, setAddedToCart] = useState(false);
+  const [initialCount, setInitialCount] = useState(1);
+  const [stock, setStock] = useState(1);
   const [dataUser, setDataUser] = useState([]);
-  const [itemData, setItemData] = useState([]);
-  const { id } = useParams();
-  const url = `http://localhost:3000/api/products/${id}`;
-  const urlCart = "/api/cart";
-  const data = {
-    "product": {
-      "title": itemData.title,
-      "timestamp": itemData.timestamp,
-      "code": itemData.code,
-      "description": itemData.description,
-      "price": itemData.price,
-      "thumbnail": itemData.thumbnail,
-      "id": itemData._id,
-      "stock": itemData.stock
+
+  useEffect(() => {
+      fetch("/user")
+          .then(res => res.json())
+          .then(res => setDataUser(res))
+          .catch(err => {
+            logger.error(`error: ${err}`);
+          });
+    }, []);   
+
+  const { cart, addItem } = useCartContext();
+
+  useEffect(() => {
+    setDetailData(item);
+    setStock(item.stock);
+
+    const foundItem = cart.find((el) => el.id === item.id);
+    if (foundItem) {
+      setInitialCount(foundItem.quantity);
     }
+  }, [cart, item]);
+
+  function onAdd(quantity) {
+    if (quantity > 0) {
+      setAddedToCart(true);
+    } else {
+      setAddedToCart(false);
+    }
+    addItem(item, quantity);
   }
 
-  useEffect(() => {
-    getWithFetch();
-  }, []);
-
-  useEffect(() => {
-    fetch("/user")
-        .then(res => res.json())
-        .then(res => setDataUser(res))
-        .catch(err => {
-            console.log(err);
-        });
-  }, []);
-
-  console.log()
-
-  const getWithFetch = async () => {
-    const response = await fetch(url);
-    const jsonData = await response.json();
-    setItemData(jsonData)  //FS - ServerMemory - Firebase
-    // setItemData(jsonData[0])  //MYSQL - SQLite3 - MongoDB
-  };
-
-  const deleteProd = (e) => {
-    fetch(url, {
-      method: "DELETE",
-    });
-  };
-
-  const addToCart = () => {
-    fetch(urlCart, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  };
-
-  const logOut = () => {
-    fetch("/api/logout", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  };
-
   return (
-    <div>
-    <h1>Detail Product</h1>
-    { itemData.error ? (
-      <div>
-      <h2>No Products</h2>
-    </div>
-    ) : (
-    <section className="mb-5 mt-5">
-      <div className="row justify-content-md-center">
-        <div className="col-md-3 ">
-          <div>
-            <div className="row product-gallery mx-1">
-              <div className="col-12 mb-0">
-                <figure className="view overlay rounded z-depth-1 main-img">
-                  <Link href="#" data-size="710x823">
-                    <img
-                      src={itemData.thumbnail}
-                      alt={itemData.title}
-                      className="img-fluid z-depth-1"
-                    ></img>
-                  </Link>
-                </figure>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-6">
-          <h5>{itemData.title}</h5>
-          <p className="mb-2 text-muted text-uppercase small">
-            {itemData.category}
-          </p>
-          <p>
-            <span className="mr-1">
-              <strong>${itemData.price}</strong>
-            </span>
-          </p>
-          <p className="pt-1">{itemData.description}</p>
-          <div className="table-responsive">
-            <table className="table table-sm table-borderless mb-0">
-              <tbody>
-                <tr>
-                  <th className="pl-0 w-25" scope="row">
-                    <strong>Code</strong>
-                  </th>
-                  <td>{itemData.code}</td>
-                </tr>
-                <tr>
-                  <th className="pl-0 w-25" scope="row">
-                    <strong>Stock</strong>
-                  </th>
-                  <td>{itemData.stock}</td>
-                </tr>
-                <tr>
-                  <th className="pl-0 w-25" scope="row">
-                    <strong>Id</strong>
-                  </th>
-                  <td>{itemData._id}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+    <div className="item-detail-container">
+      <div className="detail-img">
+        <div>
+          <img src={detailData.thumbnail} alt="pharmacy" />
+          <Link to={`/update/${detailData._id}`}>
+          {dataUser.name &&<button className="btn btn-warning" style={{color: 'black'}} type="">
+            Update
+          </button>}
+        </Link>
         </div>
       </div>
-
-      {dataUser.name ? (
-        <div>
-          <h2 className="bg-info">Welcome {dataUser.name}!</h2> <Link to="/login"><p className="bg-light" onClick={logOut}>Logout</p></Link>
-          <Link to="/">
-          <button onClick={deleteProd} className="btn btn-dark" type="">
-            Delete
-          </button>
-        </Link>
-        <Link to={`/update/${itemData._id}`}>
-          <button className="btn btn-warning" type="">
-            Update
-          </button>
-        </Link>
+      <div className="detail">
+        <div className="title">
+          <h4>{detailData.title}</h4>
+          <p>{detailData.description}</p>
         </div>
-      ) : (
-        <div>
-          <Link to='/cart'>
-            <button onClick={addToCart} className="btn btn-primary" type="">
-              Add to Cart
+        <div className="detail-price">
+          <p>
+            <strike>{detailData.stock}</strike> ${detailData.price}
+          </p>
+        </div>
+        <div className="detail-buttons">
+          {addedToCart ? (
+            <button className="btn btn--skew btn-default">
+              <Link style={{ textDecoration: "none" }} to="/cart">
+                Terminar Compra
+              </Link>
             </button>
-          </Link>
+          ) : (
+            <ItemCount
+              id={item._id}
+              stock={stock}
+              initial={initialCount}
+              onAdd={onAdd}
+            />
+          )}
         </div>
-      )}
-
-    </section>
-
-)}</div>
+      </div>
+    </div>
   );
 }
 

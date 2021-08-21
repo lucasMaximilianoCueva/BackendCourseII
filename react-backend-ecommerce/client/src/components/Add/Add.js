@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+import pino from 'pino'
+
+const logger = pino({
+  prettyPrint: { colorize: true }
+});
 
 const postUrl = "http://localhost:5000/api/products";
 
@@ -11,12 +16,12 @@ function Add() {
         .then(res => res.json())
         .then(res => setData(res))
         .catch(err => {
-            console.log(err);
+          logger.info(err);
         });
   }, []);
 
   const logOut = () => {
-    fetch("/api/logout", {
+    fetch("/api/logout-facebook", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

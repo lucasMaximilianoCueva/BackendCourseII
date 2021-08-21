@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import pino from 'pino'
+
+const logger = pino({
+  prettyPrint: { colorize: true }
+});
 
 function Info() {
     const [data, setData] = useState([]);
@@ -8,7 +13,7 @@ function Info() {
           .then(res => res.json())
           .then(res => setData(res))
           .catch(err => {
-              console.log(err);
+            logger.info(err);
           });
     }, []);
 
