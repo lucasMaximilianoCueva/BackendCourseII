@@ -143,8 +143,8 @@ const clusterMode = process.argv[3] == 'CLUSTER';
         return createSendMail({
           service: 'gmail',
           auth: {
-            user: "lukbass9@gmail.com",
-            pass: "Domingo113351"
+            user: "",
+            pass: ""
           }
         })
       }
@@ -303,8 +303,8 @@ const clusterMode = process.argv[3] == 'CLUSTER';
       if (isAuth) {
         const data = req.body;
 
-        // const acctSid = 'AC49a79e37e0435b67057646be26ab7d0d'
-        // const authToken = '23c435b9378f6cc5f2d78756c1663e71'
+        // const acctSid = ''
+        // const authToken = ''
     
         const twilioClient = twilio(acctSid, authToken)
     
