@@ -1,4 +1,5 @@
 import { Router } from "express";
+import cors from 'cors';
 import {
   getDataController,
   getDataByIdController,
@@ -21,15 +22,15 @@ import {
 const routerData = new Router();
 
 routerData.get("/api/products", getDataController);
-routerData.get("/api/products/fakeprods/:id?", getFakeProdsController);
-routerData.get("/api/products/:id", getDataByIdController);
+routerData.get("/api/products/fakeprods/:id?", cors(), getFakeProdsController);
+routerData.get("/api/products/:id", cors(), getDataByIdController);
 routerData.get("/api/random", getRandomDataController);
 routerData.get("/api/info", getInfoController);
 routerData.get("/user", getUserController);
 routerData.get("/api/logout-facebook", logoutFacebookController);
 
-routerData.get("/auth/facebook", getAuthFacebookController);
-routerData.get("/auth/facebook/callback", getDataCallbackFacebookController);
+routerData.get("/auth/facebook", cors(), getAuthFacebookController);
+routerData.get("/auth/facebook/callback", cors(), getDataCallbackFacebookController);
 
 routerData.post("/api/products/", postDataController);
 routerData.post("/api/register", registerLocalController);
