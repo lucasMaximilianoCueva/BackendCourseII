@@ -63,7 +63,7 @@ export class ProductsDB {
 const config = {
     client: "sqlite3",
     connection: {
-      filename: "./DB/prodDB.sqlite",
+      filename: "../db/prodDB.sqlite",
     },
     useNullAsDefault: true,
 };

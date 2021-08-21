@@ -65,6 +65,7 @@ function RegisterLocal() {
                             placeholder="Username"
                             required
                             className="form-control"
+                            autoComplete="off"
                           ></input>
                         </div>
                       </div>
@@ -189,7 +190,7 @@ function RegisterLocal() {
                       </div>
 
                       <div className="form-check d-flex justify-content-center mb-5">
-                        <label className="form-check-label" for="form2Example3">
+                        <label className="form-check-label" htmlFor="form2Example3">
                           Access to your <Link to="/login">account</Link>
                         </label>
                       </div>

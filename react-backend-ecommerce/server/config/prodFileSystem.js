@@ -8,7 +8,7 @@ const logger = pino({
 
 export class ProductsDB {
     constructor() {
-        this.PRODUCTS_DB = fs.readFile('./DB/Products.txt', 'utf-8', (err, data) => {
+        this.PRODUCTS_DB = fs.readFile('../db/Products.txt', 'utf-8', (err, data) => {
             if (err) {
                 logger.error("Error reading the file");
             } else {
