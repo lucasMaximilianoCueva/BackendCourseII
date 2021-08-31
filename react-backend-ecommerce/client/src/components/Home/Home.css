@@ -1,0 +1,19 @@
+.header-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 75vh;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-image: url("https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/roush-ford-ranger-1-1598774530.jpg");
+  background-size: cover;
+}
+/*# sourceMappingURL=Home.css.map */

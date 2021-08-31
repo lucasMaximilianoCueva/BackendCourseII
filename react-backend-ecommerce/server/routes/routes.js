@@ -6,7 +6,6 @@ import {
   postDataController,
   putDataController,
   deleteDataController,
-  isAuth,
   getFakeProdsController,
   getRandomDataController,
   getInfoController,
@@ -36,7 +35,7 @@ routerData.post("/api/products/", postDataController);
 routerData.post("/api/register", registerLocalController);
 routerData.post("/api/login", loginLocalController);
 routerData.post("/api/checkout", checkoutDataController);
-routerData.put("/api/products/:id", isAuth, putDataController);
-routerData.delete("/api/products/:id", isAuth, deleteDataController);
+routerData.put("/api/products/:id", putDataController);
+routerData.delete("/api/products/:id", deleteDataController);
 
 export default routerData;

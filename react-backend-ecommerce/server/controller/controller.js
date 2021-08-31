@@ -184,7 +184,7 @@ async function postDataController(req, res) {
   if (isAuth) {
     const data = req.body;
     productsRepository.insert(data).then(() => {
-      res.json(data);
+      res.json(`Product added: ${data[0]}`);
     });
     // res.redirect('http://localhost:3000/products');
   } else {
@@ -195,11 +195,11 @@ async function postDataController(req, res) {
 }
 
 async function putDataController(req, res) {
-  if (req.session && req.session.user === "Lucas" && req.session.admin) {
+  if (isAuth) {
     const data = req.body;
     const { id } = req.params;
     productsRepository.updateById(id, data).then(() => {
-      res.json(data);
+      res.json(`product with id ${id} updated`);
     });
   } else {
     res.send(

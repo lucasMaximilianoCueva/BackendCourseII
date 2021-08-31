@@ -1,0 +1,160 @@
+.item-detail-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  height: auto;
+  margin-top: 3%;
+  margin-bottom: 3%;
+}
+
+.item-detail-container img {
+  width: 60%;
+  -o-object-fit: contain;
+     object-fit: contain;
+  max-height: 50vh;
+}
+
+.detail-img {
+  width: 40%;
+  height: 50vh;
+}
+
+.detail {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 40%;
+  height: 50vh;
+}
+
+.detail .title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 100%;
+  height: 26vh;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+}
+
+.detail .title h4 {
+  font-size: 2.5rem;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.detail .title p {
+  font-size: 1rem;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.detail .detail-price {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  width: 100%;
+  height: 10vh;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.detail .detail-price p {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-top: 20px;
+  margin-left: 20px;
+  color: cornflowerblue;
+}
+
+.detail .detail-price p strike {
+  font-size: 1.2rem;
+  color: #303030;
+}
+
+.detail .detail-buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  width: 100%;
+  height: 14vh;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.btn {
+  background: transparent;
+  color: inherit;
+  text-decoration: none;
+  border: 0;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  display: inline-block;
+}
+
+.btn-default {
+  color: black;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: 4px solid black;
+  padding: 12px 28px;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.btn-default:hover {
+  background: black;
+}
+
+.btn-default:hover a {
+  color: white;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+.btn-default:disabled:hover {
+  background: transparent;
+  color: black;
+}
+
+.btn--skew {
+  -webkit-transform: skew(-10deg);
+          transform: skew(-10deg);
+}
+
+.btn--skew > span {
+  -webkit-transform: skew(10deg);
+          transform: skew(10deg);
+  display: inline-block;
+  cursor: pointer;
+}
+
+.btn a {
+  color: black;
+}
+/*# sourceMappingURL=ItemDetail.css.map */
