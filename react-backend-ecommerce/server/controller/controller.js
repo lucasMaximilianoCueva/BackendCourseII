@@ -11,14 +11,16 @@ import User from "../config/user.js";
 import bcrypt from 'bcrypt'
 import { buildSchema } from 'graphql';
 import mongoose from 'mongoose';
-import pino from 'pino'
+import pino from 'pino';
+import config from "../config/config.js";
 
 const logger = pino({
     prettyPrint: { colorize: true }
   });
 
-const option = process.argv[4] || 5
-
+const option = Number(config.DB)
+console.log(config.NODE_ENV)
+console.log(config.DB)
 const productsRepository = new ProductsRepository(option);
 const numCPUs = os.cpus().length;
 
@@ -406,8 +408,8 @@ async function checkoutDataController(req, res) {
   if (isAuth) {
     const data = req.body;
 
-    // const acctSid = 'AC49a79e37e0435b67057646be26ab7d0d'
-    // const authToken = '23c435b9378f6cc5f2d78756c1663e71'
+    const acctSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
 
     const twilioClient = twilio(acctSid, authToken)
 

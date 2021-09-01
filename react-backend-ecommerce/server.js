@@ -14,13 +14,14 @@ import pino from 'pino'
 import { graphqlHTTP } from "express-graphql";
 import routerData from "./server/routes/routes.js";
 import { schema, root } from "./server/controller/controller.js";
+import config from "./server/config/config.js";
 
 const logger = pino({
   prettyPrint: { colorize: true }
 });
 
 const numCPUs = os.cpus().length
-const clusterMode = process.argv[3] == 'CLUSTER';
+const clusterMode = config.CLUSTER_MODE == 'CLUSTER';
 
   if (clusterMode && cluster.isMaster) {
 

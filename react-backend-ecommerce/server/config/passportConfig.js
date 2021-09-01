@@ -1,4 +1,5 @@
 import facebook from 'passport-facebook'
+import config from './config.js';
 const facebookStrategy = facebook.Strategy;
 
 
@@ -6,8 +7,8 @@ const facebookStrategy = facebook.Strategy;
 const passportConfig = (passport) => {
   passport.use(
     new facebookStrategy({    // Obj Process
-      clientID: process.argv[3] || '285367766706574', 
-      clientSecret: process.argv[4] || '48cc6580360da394ca2fb3eee0ebe982',
+      clientID: config.CLIENT_ID || '285367766706574', 
+      clientSecret: config.CLIENT_SECRET || '48cc6580360da394ca2fb3eee0ebe982',
       callbackURL: '/auth/facebook/callback',
       profileFields: ['id', 'displayName', 'photos', 'emails'],
       scope: ['email']
