@@ -19,8 +19,7 @@ const logger = pino({
   });
 
 const option = Number(config.DB)
-console.log(config.NODE_ENV)
-console.log(config.DB)
+
 const productsRepository = new ProductsRepository(option);
 const numCPUs = os.cpus().length;
 

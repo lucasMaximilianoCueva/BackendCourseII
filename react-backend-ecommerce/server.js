@@ -15,6 +15,7 @@ import { graphqlHTTP } from "express-graphql";
 import routerData from "./server/routes/routes.js";
 import { schema, root } from "./server/controller/controller.js";
 import config from "./server/config/config.js";
+import minimist from 'minimist';
 
 const logger = pino({
   prettyPrint: { colorize: true }
@@ -41,8 +42,10 @@ const clusterMode = config.CLUSTER_MODE == 'CLUSTER';
     const httpServer = new HttpServer(app);
     const io = new Socket(httpServer)
     
-    const PORT = process.env.PORT || 5000;
-    
+    const args = process.argv.slice(2);
+    const argsPort = minimist(args);
+    const PORT = argsPort.PORT || 5000
+
     httpServer.listen(PORT, err => {
       if (!err) logger.info(`Servidor express escuchando en el puerto ${PORT}`)
     });
