@@ -1,6 +1,7 @@
 import moment from "moment";
 import mongoose from "mongoose"
 import pino from 'pino'
+import { productsDAO } from "../models/productSchema.js";
 
 const logger = pino({
   prettyPrint: { colorize: true }
@@ -16,18 +17,6 @@ export class ProdMongo {
     this.url = "mongodb://localhost:27017/ecommerce";
     this.ATLAS_URL =
       'mongodb+srv://reactExpressDB:42707519@cluster0.7ezer.mongodb.net/ecommerce?retryWrites=true&w=majority';
-
-    this.productsSchema = new Schema({
-      title: String,
-      description: String,
-      timestamp: String,
-      thumbnail: String,
-      code: Number,
-      price: Number,
-      stock: Number,
-    });
-
-    this.productsDAO = mongoose.model("items", this.productsSchema);
 
     if(conex === "local") {
       mongoose.connect(
@@ -65,7 +54,7 @@ export class ProdMongo {
   }
   //GET
   list() {
-    return this.productsDAO.find({})
+    return productsDAO.find({})
   }
   //POST
   insert(items) {
@@ -74,14 +63,14 @@ export class ProdMongo {
   }
   //GET BY ID
   listById(id) {
-    return this.productsDAO.find({_id: id})
+    return productsDAO.find({_id: id})
   }
   //DELETE BY ID
   deleteById(id) {
-    return this.productsDAO.deleteOne({_id: id})
+    return productsDAO.deleteOne({_id: id})
   }
   //PUT
   updateById(id, data) {
-    return this.productsDAO.updateOne({_id: id}, {$set: data})
+    return productsDAO.updateOne({_id: id}, {$set: data})
   }
 }

@@ -4,17 +4,17 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import mongoStore from 'connect-mongo'
 import passport from "passport";
-import passportConfig from './server/config/passportConfig.js';
+import passportConfig from './middlewares/passport.js';
 import cluster from 'cluster';
 import os from 'os';
 import { Server as Socket } from 'socket.io';
-import { chat } from "./server/config/chat.js";
-import passportLocal from './server/config/passportLocal.js';
+import { chat } from "./config/chat.js";
+import passportLocal from './middlewares/passportLocal.js';
 import pino from 'pino'
 import { graphqlHTTP } from "express-graphql";
-import routerData from "./server/routes/routes.js";
-import { schema, root } from "./server/controller/controller.js";
-import config from "./server/config/config.js";
+import routerData from "./routes/routes.js";
+import { schema, root } from "./graphql/schemaGraphql.js";
+import config from "./config/config.js";
 import minimist from 'minimist';
 
 const logger = pino({

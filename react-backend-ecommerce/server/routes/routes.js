@@ -1,14 +1,18 @@
 import { Router } from "express";
-import cors from 'cors';
+import cors from "cors";
 import {
   getDataController,
   getDataByIdController,
   postDataController,
   putDataController,
-  deleteDataController,
+  deleteDataController
+} from '../controller/product.js';
+import {
   getFakeProdsController,
   getRandomDataController,
-  getInfoController,
+} from "../controller/randoms.js";
+import { getInfoController } from "../controller/info.js";
+import {
   getDataCallbackFacebookController,
   getUserController,
   logoutFacebookController,
@@ -16,7 +20,7 @@ import {
   registerLocalController,
   loginLocalController,
   checkoutDataController,
-} from "../controller/controller.js";
+} from "../controller/user.js";
 
 const routerData = new Router();
 
@@ -29,7 +33,11 @@ routerData.get("/user", getUserController);
 routerData.get("/api/logout-facebook", logoutFacebookController);
 
 routerData.get("/auth/facebook", cors(), getAuthFacebookController);
-routerData.get("/auth/facebook/callback", cors(), getDataCallbackFacebookController);
+routerData.get(
+  "/auth/facebook/callback",
+  cors(),
+  getDataCallbackFacebookController
+);
 
 routerData.post("/api/products/", postDataController);
 routerData.post("/api/register", registerLocalController);

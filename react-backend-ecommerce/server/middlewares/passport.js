@@ -1,5 +1,5 @@
 import facebook from 'passport-facebook'
-import config from './config.js';
+import config from '../config/config.js';
 const facebookStrategy = facebook.Strategy;
 
 

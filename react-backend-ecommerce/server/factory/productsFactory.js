@@ -1,9 +1,9 @@
-import { ProdMongo } from './prodMongo.js';
-import { prodMysql } from './prodMysql.js';
-import { prodSqlite3 } from './prodSqlite3.js';
-// import { prodFs } from './prodFileSystem.js';
-import { prodServerMemory } from './prodServerMemory.js';
-// import { prodFirestore } from './prodFirebase.js';
+import { ProdMongo } from '../db/prodMongo.js';
+import { prodMysql } from '../db/prodMysql.js';
+import { prodSqlite3 } from '../db/prodSqlite3.js';
+// import { prodFs } from '../db/prodFileSystem.js';
+import { prodServerMemory } from '../db/prodServerMemory.js';
+// import { prodFirestore } from '../db/prodFirebase.js';
 
 export class ProductsRepository {
     repository;
