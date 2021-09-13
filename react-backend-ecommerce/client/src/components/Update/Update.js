@@ -37,7 +37,7 @@ function Update() {
   };
 
   const { id } = useParams();
-  const url = `/api/products/${id}`;
+  const url = `/product/${id}`;
   const data = {
     title: title,
     description: description,
@@ -48,7 +48,7 @@ function Update() {
 
   const updateProd = (e) => {
     fetch(url, {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",

@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 
 const staticCategories = [{ id: "oferta", name: "Ofertas" }];
 
-const url = "/api/products"; // SERVER
+const url = "/product/"; // SERVER
 
 function ItemListContainer() {
   const [loading, setLoading] = useState(null);
@@ -25,6 +25,8 @@ function ItemListContainer() {
       setItemData(jsonData);
       setLoading(false);
     };  
+
+    console.log(itemData)
 
   return (
     <>
