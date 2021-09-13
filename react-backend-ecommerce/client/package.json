@@ -11,7 +11,6 @@
     "firebase": "^7.2.3",
     "moment": "^2.29.1",
     "node-sass": "^4.14.1",
-    "pino": "^6.13.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-is": "^16.13.1",
@@ -40,5 +39,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:1337"
+  "proxy": "http://localhost:5000"
 }

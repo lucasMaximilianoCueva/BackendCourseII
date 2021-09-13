@@ -17,7 +17,7 @@ function ItemDetailContainer() {
   }, []);
 
   const getWithFetch = async () => {
-    const response = await fetch(`http://localhost:1337/product/${id}`);
+    const response = await fetch(`http://localhost:5000/api/products/${id}`);
     const jsonData = await response.json();
     // setItemData(jsonData)  //FS - ServerMemory - Firebase
     setItemData(jsonData[0])  //MYSQL - SQLite3 - MongoDB

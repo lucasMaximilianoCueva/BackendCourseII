@@ -2,10 +2,51 @@ import React, { useState, useEffect } from "react";
 import ItemList from "../ItemList/ItemList";
 import "./ItemListContainer.scss";
 import { NavLink } from "react-router-dom";
+import axios from "axios";
 
 const staticCategories = [{ id: "oferta", name: "Ofertas" }];
 
-const url = "/product/"; // SERVER
+const url = "/api/products"; // SERVER
+const urlGql = "/gql/api/products";
+
+const [prodData, setProdData] = useState([]);
+
+
+  /* ------------------------------- */
+  /*       GET noticia (query)       */
+  /* ------------------------------- */
+const getProd = async () => {
+      try {
+          let body = {
+              query: `
+                  query {
+                      products {
+                          _id
+                          title
+                          description
+                          thumbnail
+                          price 
+                          stock
+                      }
+                  }
+              `,
+              variables: {}
+          }
+          let options = {
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          }
+          let response = await axios.post(urlGql, body, options)
+          let { data: { data: { products } } } = response
+          setProdData({ prodData: products ? products : [] })
+      }
+      catch (error) {
+          console.error(error)
+          setProdData({ products: [] })
+      }
+  }
+
 
 function ItemListContainer() {
   const [loading, setLoading] = useState(null);
@@ -25,8 +66,6 @@ function ItemListContainer() {
       setItemData(jsonData);
       setLoading(false);
     };  
-
-    console.log(itemData)
 
   return (
     <>

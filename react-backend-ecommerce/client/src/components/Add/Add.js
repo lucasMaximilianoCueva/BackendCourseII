@@ -6,7 +6,7 @@ const logger = pino({
   prettyPrint: { colorize: true }
 });
 
-const postUrl = "http://localhost:1337/product";
+const postUrl = "http://localhost:5000/api/products";
 
 function Add() {
   const [data, setData] = useState([]);
