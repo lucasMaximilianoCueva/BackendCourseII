@@ -1,19 +1,31 @@
+# Adonis fullstack application
 
-``` bash
-# Install dependencies for server
-npm install
+This is the fullstack boilerplate for AdonisJs, it comes pre-configured with.
 
-# Install dependencies for client
-npm run client-install
+1. Bodyparser
+2. Session
+3. Authentication
+4. Web security middleware
+5. CORS
+6. Edge template engine
+7. Lucid ORM
+8. Migrations and seeds
 
-# Run the client & server with concurrently
-npm run dev
+## Setup
 
-# Run the Express server only
-npm run server
+Use the adonis command to install the blueprint
 
-# Run the React client only
-npm run client
+```bash
+adonis new yardstick
+```
 
-# Server runs on http://localhost:5000 and client on http://localhost:3000
+or manually clone the repo and then run `npm install`.
+
+
+### Migrations
+
+Run the following command to run startup migrations.
+
+```js
+adonis migration:run
 ```
